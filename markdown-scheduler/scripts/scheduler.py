@@ -87,13 +87,18 @@ def scan_and_sync():
 # --- 调度与唤醒逻辑 ---
 
 class ConfigFolderHandler(FileSystemEventHandler):
-    """inotify 监听：当外部程序修改 tasks.json 时，强制调度器重新计算"""
     def __init__(self, callback):
         self.callback = callback
+        self.last_triggered = 0
+
     def on_modified(self, event):
         if event.src_path.endswith("tasks.json"):
-            print("检测到 tasks.json 外部变动，唤醒调度器...")
-            self.callback()
+            now = time.time()
+            # 只有距离上次触发超过 2 秒，才再次执行（避开程序自身的写入波动）
+            if now - self.last_triggered > 2:
+                print("检测到 tasks.json 外部变动，唤醒调度器...")
+                self.last_triggered = now
+                self.callback()
 
 def job_wrapper():
     """主调度循环"""
