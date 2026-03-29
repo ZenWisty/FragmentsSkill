@@ -1,0 +1,13 @@
+# Exclude this file itself
+# .gitignore
+
+# Exclude all CLAUDE.md files in all directories
+**/CLAUDE.md
+
+# Other common ignores
+__pycache__/
+*.pyc
+*.pyo
+
+# Exclude specific parser file
+markdown-tag-parser/scripts/parser_c.py
