@@ -1,41 +1,15 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
+# --- 配置文件名 ---
+VAULT_NAME="md_db"  # 确保这个名字和你在 Obsidian App 里建立的库名一致
+FILE_NAME=$1
 
-# --- 配置区 ---
-VAULT_NAME="md_db"
-VAULT_PATH="$HOME/storage/shared/MyObsidianVaults/md_db"
-DEFAULT_FILE="base.md"
+# 如果输入包含路径，只提取相对于库根目录的部分
+# 比如输入 "test/note.md"，Obsidian URI 只需要 "test/note.md"
+CLEAN_FILE=$(basename "$FILE_NAME")
 
-# --- 参数处理 ---
-# $1: 文件路径 (默认为 base.md)
-# $2: 行号 (数字)
-TARGET_FILE="${1:-$DEFAULT_FILE}"
-LINE_NUM="$2"
+# 调用安卓 Activity Manager 唤起 Obsidian
+# 注意：这里直接唤起 URI 协议
+am start -a android.intent.action.VIEW \
+   -d "obsidian://open?vault=${VAULT_NAME}&file=${CLEAN_FILE}" > /dev/null 2>&1
 
-# URL 编码函数（处理路径中的空格）
-urlencode() {
-    echo "$1" | sed 's/ /%20/g'
-}
-
-ENCODED_FILE=$(urlencode "$TARGET_FILE")
-
-# --- 构建 URI ---
-if [ -n "$LINE_NUM" ]; then
-    # 如果指定了行号，使用 Advanced URI 插件协议
-    # 注意：这需要你在 Obsidian 中安装 "Advanced URI" 插件
-    URI="obsidian://advanced-uri?vault=${VAULT_NAME}&filepath=${ENCODED_FILE}&line=${LINE_NUM}"
-else
-    # 如果没指定行号，使用官方标准协议打开文件
-    URI="obsidian://open?vault=${VAULT_NAME}&file=${ENCODED_FILE}"
-fi
-
-# --- 执行跳转 ---
-if [ ! -d "$VAULT_PATH" ]; then
-    echo "警告: 库路径不存在 $VAULT_PATH"
-fi
-
-echo "[*] 正在打开: $TARGET_FILE ${LINE_NUM:+在第 }$LINE_NUM 行"
-
-# 发送 Intent 唤起 Obsidian
-am start -a android.intent.action.VIEW -d "$URI" > /dev/null 2>&1
-
-exit 0
+echo "正在 Obsidian 中打开: $CLEAN_FILE"
