@@ -12,3 +12,5 @@ __pycache__/
 
 # Exclude specific parser file
 markdown-tag-parser/scripts/parser_c.py
+
+**/launch.json

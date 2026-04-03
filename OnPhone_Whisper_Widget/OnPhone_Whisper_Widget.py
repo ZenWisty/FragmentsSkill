@@ -6,6 +6,7 @@ from pathlib import Path
 import wave
 import riva.client
 from riva.client import ASRService, RecognitionConfig
+import time
 
 # ================= Configuration =================
 NVIDIA_API_KEY = os.getenv("NVIDIA_RIVA_KEY")                      
@@ -52,24 +53,59 @@ def termux_api(command, input_data=None):
 def show_toast(message):
     termux_api(["termux-toast", "-s", message])
 
-def call_system_recorder():
-    print("calling the phone record program...")
-    # use am.start
-    subprocess.run(["am","start","-a","android.provider.MediaStore.RECORD_SOUND"], capture_output=True)
-    input("please record and save, then press enter here in CLI ...")
-    potential_paths = [
-            "/storage/emulated/0/Sounds",
-            ]
-
-    for path in potential_paths:
+def get_latest_file_info(paths):
+    latest_file = None
+    latest_mtime = 0
+    for path in paths:
         if os.path.exists(path):
             files = [os.path.join(path, f) for f in os.listdir(path) if '.backup' not in f]
             if files:
-                # time order
-                latest_file = max(files, key=os.path.getmtime)
-                return latest_file
-    return None
+                mfile = max(files, key=os.path.getmtime)
+                mtime = os.path.getmtime(mfile)
+                if mtime > latest_mtime:
+                    latest_mtime = mtime
+                    latest_file = mfile
+    return latest_file, latest_mtime
 
+def call_system_recorder():
+    print("calling the phone record program...")
+    potential_paths = [
+            "/storage/emulated/0/Sounds",
+            ]
+    initial_file, initial_mtime = get_latest_file_info(potential_paths)
+    # use am.start
+    subprocess.run(["am","start","-a","android.provider.MediaStore.RECORD_SOUND"], capture_output=True)
+    # input("please record and save, then press enter here in CLI ...")
+    try:
+        while True:
+            current_file, current_mtime = get_latest_file_info(potential_paths)
+            if current_file and (current_file != initial_file or current_mtime > initial_mtime):
+                time.sleep(1)
+                size_before = os.path.getsize(current_file)
+                time.sleep(1)
+                size_after = os.path.getsize(current_file)
+                if size_before == size_after and size_after >0:
+                    print('\n new record file found!')
+                    return current_file
+            print(".", end="", flush=True)
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print('\n stopped by keyboard by user.')
+        return None
+
+    #for path in potential_paths:
+    #    if os.path.exists(path):
+    #        files = [os.path.join(path, f) for f in os.listdir(path) if '.backup' not in f]
+    #        if files:
+    #            # time order
+    #            latest_file = max(files, key=os.path.getmtime)
+    #            return latest_file
+    #return None
+
+def auto_paste_logic():
+    time.sleep(0.1)
+    subprocess.run("input keyevent 279", shell=True)# need phone been rooted,  you can change to adb. 
+    
 def main():
     #if not os.path.exists(VOICE_FILE):
     #    show_toast(f"Error: File not found\n{VOICE_FILE}")
@@ -120,17 +156,22 @@ def main():
         show_toast("Recognition failed or empty result")
         return
 
+    # automatic clipboard copy at first
+    termux_api(["termux-clipboard-set"], input_data=transcript)
     # Dialog for editing
     dialog_res = termux_api([
         "termux-dialog", "text", 
-        "-t", "Confirm Transcription (NVIDIA NIM)",
+        "-t", "无需修改：点OK. \n修改：在框内粘贴后改",
         "-i", transcript
     ])
+    auto_paste_logic()
 
     if dialog_res:
         data = json.loads(dialog_res)
         if data.get("code") == -1:
             final_text = data.get("text", "").strip()
+            if not final_text:
+                final_text = transcript
             termux_api(["termux-clipboard-set"], input_data=final_text)
             show_toast("✅ Copied to clipboard")
 
