@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "openai-whisper": {
+      "source": "/data/data/com.termux/files/home/storage/shared/clawdis_temp",
+      "sourceType": "local",
+      "computedHash": "2f04fe7900baaecfdc63a978cb18239a1ba987497d7c6b85e578622ed6ea82b9"
+    }
+  }
+}
