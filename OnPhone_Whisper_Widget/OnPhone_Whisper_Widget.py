@@ -8,7 +8,7 @@ import riva.client
 from riva.client import ASRService, RecognitionConfig
 
 # ================= Configuration =================
-API_KEY = "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"                      
+NVIDIA_API_KEY = os.getenv("NVIDIA_RIVA_KEY")                      
 
 # NVIDIA NIM Endpoint for Whisper Large V3
 MODEL = "nvidia/whisper-large-v3"
@@ -30,7 +30,7 @@ auth = riva.client.Auth(
         uri="grpc.nvcf.nvidia.com:443",
         metadata_args=[
             ["function-id", "b702f636-f60c-4a3d-a6f4-f3568c13bd7d"],
-            ["authorization", "Bearer "+API_KEY]
+            ["authorization", "Bearer "+NVIDIA_API_KEY]
         ],
         options=options,
     )
