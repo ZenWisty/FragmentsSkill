@@ -3,6 +3,7 @@
 
 # Exclude all CLAUDE.md files in all directories
 **/CLAUDE.md
+**/.claude/
 
 # Other common ignores
 __pycache__/
