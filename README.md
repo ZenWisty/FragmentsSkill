@@ -1,4 +1,5 @@
 # FragmentsSkill
 FragmentsSkill 项目主要是用来整理和安排的工具，包含了若干基于基座AI开发的 Skills，这些 Skills 都经过了skill标准格式校验。
-以下是各个子项目的简单说明，详细说明请参考每个子项目的README.md文件：
-1. private-DBserver-access: 这是一个私有的数据库服务器访问 Skill，用于访问私有的数据库服务器。
+主要的功能 实现在两个 branch 上：
+1.on_phone branch: 由于应用场景主要在 Phone 上，因此这是主要开发的分支
+2.on_PC branch: PC上的应用
