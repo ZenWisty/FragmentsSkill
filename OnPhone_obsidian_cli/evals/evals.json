@@ -1,0 +1,23 @@
+{
+  "skill_name": "obsidian-android-cli",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Write me an obsidian CLI script for Android/Termux that uses Advanced URI for write actions (open, append, prepend, daily, command, search) and local ripgrep/find for read queries (tags, tag, links, backlinks, file, files, folder, folders, outline, move). My vault is at ~/storage/shared/Documents/Obsidian and vault name is MyVault.",
+      "expected_output": "A complete bash script with all commands implemented, VAULT and VAULT_PATH config variables at top, and a help/usage case for unknown commands.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "I want to search for all files tagged with #todo in my obsidian vault, show me which files have it, and count the total occurrences. Also show me all unique tags across my entire vault sorted by frequency.",
+      "expected_output": "Script should call 'obsidian tag name=\"todo\" verbose' for the search, and 'obsidian tags counts sort=count' for global tag frequencies. Output includes file paths and counts.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Show me the outline/heading tree for my note at path 'Projects/Active.md', how many links total are in it, and what files link to it (backlinks). Also list all PDF files in the Attachments folder.",
+      "expected_output": "Three commands: 'obsidian outline path=\"Projects/Active.md\"' (tree format with line numbers), 'obsidian links path=\"Projects/Active.md\" total' (count), 'obsidian backlinks path=\"Projects/Active.md\"' (file list), and 'obsidian files folder=\"Attachments\" ext=\".pdf\"'.",
+      "files": []
+    }
+  ]
+}
