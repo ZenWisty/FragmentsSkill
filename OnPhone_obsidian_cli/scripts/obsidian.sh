@@ -14,21 +14,27 @@
 # ==============================
 
 # --- 配置区（必须修改） ---
-VAULT="YourVaultName"
-VAULT_PATH="$HOME/storage/shared/Documents/Obsidian"
+VAULT="md_db"
+VAULT_PATH="$HOME/storage/shared/MyObsidianVaults/md_db"
 # -------------------------
 
 cd "$VAULT_PATH" || exit 1
 
 # 参数解析辅助函数
 # 从 "name=todo" 或 'name="todo"' 中提取值
+# get_val() {
+#     echo "$*" | grep -oP "$1=\"?\K[^\" ]+"
+# }
 get_val() {
-    echo "$*" | grep -oP "$1=\"?\K[^\" ]+"
+    local key=$1
+    shift
+    local input="$*"
+    # 优先匹配引号内的值，其次匹配无引号的值
+    echo "$input" | grep -oP "$key=\"\K[^\"]+|(?<=$key=)[^\" ]+"
 }
 
 command=$1
 shift
-args="$*"
 
 case "$command" in
     # ============================================================
@@ -37,7 +43,7 @@ case "$command" in
 
     "open")
         # 在 Obsidian 中打开文件
-        FILE=$(get_val "path" <<< "$args")
+        FILE=$(get_val "path" "$@")
         am start -a android.intent.action.VIEW \
             -d "obsidian://advanced-uri?vault=$VAULT&filepath=$FILE" \
             > /dev/null 2>&1
@@ -46,9 +52,15 @@ case "$command" in
 
     "append")
         # 向文件追加内容
-        FILE=$(get_val "path" <<< "$args")
-        DATA=$(get_val "content" <<< "$args")
+        FILE=$(get_val "path" "$@")
+        DATA=$(get_val "content" "$@")
         # 注意: DATA 中特殊字符需 URL 编码
+        # URL 编码
+        # FILE_ENC=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$FILE'''))")
+        # DATA_ENC=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$DATA'''))")
+
+        echo "FILE: $FILE"
+        echo "CONTENT TO APPEND: $DATA"
         am start -a android.intent.action.VIEW \
             -d "obsidian://advanced-uri?vault=$VAULT&filepath=$FILE&data=$DATA&mode=append" \
             > /dev/null 2>&1
@@ -57,8 +69,8 @@ case "$command" in
 
     "prepend")
         # 向文件头部插入内容
-        FILE=$(get_val "path" <<< "$args")
-        DATA=$(get_val "content" <<< "$args")
+        FILE=$(get_val "path" "$@")
+        DATA=$(get_val "content" "$@")
         am start -a android.intent.action.VIEW \
             -d "obsidian://advanced-uri?vault=$VAULT&filepath=$FILE&data=$DATA&mode=prepend" \
             > /dev/null 2>&1
@@ -75,7 +87,7 @@ case "$command" in
 
     "command")
         # 执行 Obsidian 内部命令（需知道 commandid）
-        CMD_ID=$(get_val "id" <<< "$args")
+        CMD_ID=$(get_val "id" "$@")
         am start -a android.intent.action.VIEW \
             -d "obsidian://advanced-uri?vault=$VAULT&commandid=$CMD_ID" \
             > /dev/null 2>&1
@@ -83,24 +95,24 @@ case "$command" in
         ;;
 
     "search")
-        # 在 Obsidian 中执行搜索
-        QUERY=$(get_val "query" <<< "$args")
-        # 空格需替换为 %20
-        ENCODED_QUERY=$(echo "$QUERY" | sed 's/ /%20/g')
-        am start -a android.intent.action.VIEW \
-            -d "obsidian://advanced-uri?vault=$VAULT&search=$ENCODED_QUERY" \
-            > /dev/null 2>&1
-        echo "Searched: $QUERY"
+        # 在库中搜索文件内容，返回匹配文件路径
+        QUERY=$(get_val "query" "$@")
+        if [ -z "$QUERY" ]; then
+            echo "Error: query is required"
+            exit 1
+        fi
+        # 搜索 .md 文件内容，返回文件路径（去重）
+        rg -l -g '*.md' "$QUERY" "$VAULT_PATH" | sed "s|$VAULT_PATH/||" | sort -u
         ;;
 
-    "bookmark")
-        # 打开书签
-        NAME=$(get_val "name" <<< "$args")
-        am start -a android.intent.action.VIEW \
-            -d "obsidian://advanced-uri?vault=$VAULT&bookmark=$NAME" \
-            > /dev/null 2>&1
-        echo "Opened bookmark: $NAME"
-        ;;
+    # "bookmark")
+    #     # 打开书签
+    #     NAME=$(get_val "name" "$@")
+    #     am start -a android.intent.action.VIEW \
+    #         -d "obsidian://advanced-uri?vault=$VAULT&bookmark=$NAME" \
+    #         > /dev/null 2>&1
+    #     echo "Opened bookmark: $NAME"
+    #     ;;
 
     # ============================================================
     # B. 查询类命令 — 通过本地文件操作
@@ -108,7 +120,7 @@ case "$command" in
 
     "read")
         # 读取文件内容
-        FILE=$(get_val "path" <<< "$args")
+        FILE=$(get_val "path" "$@")
         if [ ! -f "$VAULT_PATH/$FILE" ]; then
             echo "File not found: $FILE"
             exit 1
@@ -118,10 +130,10 @@ case "$command" in
 
     "tags")
         # 列出标签
-        FILE=$(get_val "path" <<< "$args")
-        TOTAL_ONLY=$(echo "$args" | grep -q "total"   && echo "yes")
-        SHOW_COUNTS=$(echo "$args" | grep -q "counts" && echo "yes")
-        SORT_COUNT=$(echo "$args" | grep -q "sort=count" && echo "yes")
+        FILE=$(get_val "path" "$@")
+        TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total"   && echo "yes")
+        SHOW_COUNTS=$(printf '%s\n' "$@" | grep -qx "counts" && echo "yes")
+        SORT_COUNT=$(printf '%s\n' "$@" | grep -qx "sort=count" && echo "yes")
 
         TARGET=${FILE:-$VAULT_PATH}
         ALL_TAGS=$(rg -ohP "(?<=^|[[:space:]])#[\w/]+" "$TARGET")
@@ -139,9 +151,9 @@ case "$command" in
 
     "tag")
         # 搜索含特定标签的文件
-        TAG=$(get_val "name" <<< "$args")
-        TOTAL_ONLY=$(echo "$args" | grep -q "total"   && echo "yes")
-        VERBOSE=$(echo "$args" | grep -q "verbose" && echo "yes")
+        TAG=$(get_val "name" "$@")
+        TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total"   && echo "yes")
+        VERBOSE=$(printf '%s\n' "$@" | grep -qx "verbose" && echo "yes")
 
         # 匹配 #tag，确保前后是标签边界
         MATCHES=$(rg -i -l "(^|[[:space:]])#$TAG([[:space:]]|$)" "$VAULT_PATH")
@@ -158,8 +170,8 @@ case "$command" in
 
     "links")
         # 提取文件中的 [[link]] 链接
-        FILE=$(get_val "path" <<< "$args")
-        TOTAL_ONLY=$(echo "$args" | grep -q "total" && echo "yes")
+        FILE=$(get_val "path" "$@")
+        TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total" && echo "yes")
 
         LINKS=$(rg -ohP "\[\[\K[^\]|#]+" "$VAULT_PATH/$FILE")
 
@@ -172,32 +184,42 @@ case "$command" in
 
     "backlinks")
         # 查找反链：哪些文件链接到目标文件
-        FILE=$(get_val "path" <<< "$args")
+        FILE=$(get_val "path" "$@")
         TARGET=$(basename "$FILE" .md)
         rg -l "\[\[$TARGET\]\]" "$VAULT_PATH"
         ;;
 
     "file")
         # 获取文件元信息
-        FILE=$(get_val "path" <<< "$args")
-        if [ ! -f "$VAULT_PATH/$FILE" ]; then
+        FILE=$(get_val "file" "$@")
+        FULL_FILE="$VAULT_PATH/$FILE"
+        if [ ! -f "$FULL_FILE" ]; then
             echo "File not found: $FILE"
             exit 1
         fi
-        SIZE=$(stat -c %s "$VAULT_PATH/$FILE")
-        MOD=$(stat -c %y "$VAULT_PATH/$FILE")
-        WORDS=$(wc -w < "$VAULT_PATH/$FILE")
-        echo "Path: $FILE"
-        echo "Size: ${SIZE} bytes"
-        echo "Words: $WORDS"
-        echo "Modified: $MOD"
+
+        NAME=$(basename "$FILE" .md)
+        EXT=$(basename "$FILE" | grep -oP '\.[^.]+$' || echo "")
+        SIZE=$(stat -c %s "$FULL_FILE")
+        # %W 创建时间（不可用则显示 -）
+        CREATED=$(stat -c %W "$FULL_FILE" 2>/dev/null || echo "-")
+        # %Y 修改时间（纳秒级时间戳）
+        MODIFIED=$(stat -c %Y "$FULL_FILE")
+
+        # 按指定格式输出，键名宽度 10，值左对齐
+        printf "%-10s %s\n" "path" "$FILE"
+        printf "%-10s %s\n" "name" "$NAME"
+        printf "%-10s %s\n" "extension" "$EXT"
+        printf "%-10s %s\n" "size" "$SIZE"
+        printf "%-10s %s\n" "created" "$CREATED"
+        printf "%-10s %s\n" "modified" "$MODIFIED"
         ;;
 
     "files")
         # 列出文件
-        FOLDER=$(get_val "folder" <<< "$args")
-        EXT=$(get_val "ext" <<< "$args")
-        TOTAL_ONLY=$(echo "$args" | grep -q "total" && echo "yes")
+        FOLDER=$(get_val "folder" "$@")
+        EXT=$(get_val "ext" "$@")
+        TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total" && echo "yes")
 
         TARGET=${FOLDER:-$VAULT_PATH}
         PATTERN="*${EXT:-}"
@@ -212,35 +234,55 @@ case "$command" in
 
     "folder")
         # 文件夹信息
-        DIR=$(get_val "path" <<< "$args")
-        INFO=$(get_val "info" <<< "$args")
-        if [ ! -d "$VAULT_PATH/$DIR" ]; then
+        DIR=$(get_val "path" "$@")
+        FULL_DIR="$VAULT_PATH/$DIR"
+        if [ ! -d "$FULL_DIR" ]; then
             echo "Folder not found: $DIR"
             exit 1
         fi
 
-        FULL_DIR="$VAULT_PATH/$DIR"
-        case "$INFO" in
-            "files")   find "$FULL_DIR" -type f | wc -l ;;
-            "folders") find "$FULL_DIR" -type d | wc -l ;;
-            "size")    du -sh "$FULL_DIR" | cut -f1 ;;
-            *)
-                du -sh "$FULL_DIR"
-                echo "$(find "$FULL_DIR" -maxdepth 1 | wc -l) items"
-                ;;
-        esac
+        # 文件夹名称（不带路径）
+        DIR_NAME=$(basename "$DIR")
+        # 子文件数（不含自身）
+        FILE_COUNT=$(find "$FULL_DIR" -type f | wc -l)
+        # 子文件夹数（不含自身）
+        FOLDER_COUNT=$(find "$FULL_DIR" -type d | wc -l)
+        FOLDER_COUNT=$((FOLDER_COUNT - 1))
+        # 总大小（KB）
+        TOTAL_SIZE=$(du -sk "$FULL_DIR" | cut -f1)
+
+        printf "%-10s %s\n" "path" "$DIR_NAME"
+        printf "%-10s %s\n" "files" "$FILE_COUNT"
+        printf "%-10s %s\n" "folders" "$FOLDER_COUNT"
+        printf "%-10s %s\n" "size" "$TOTAL_SIZE"
         ;;
 
     "folders")
-        # 列出子文件夹
-        PARENT=$(get_val "folder" <<< "$args")
-        TOTAL_ONLY=$(echo "$args" | grep -q "total" && echo "yes")
+        # 列出所有子文件夹（递归，含深层文件夹）
+        # vault 文件夹本身显示为 /
+        PARENT=$(get_val "folder" "$@")
+        TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total" && echo "yes")
 
         TARGET=${PARENT:-$VAULT_PATH}
-        FOLDERS=$(find "$TARGET" -maxdepth 1 -type d | sed 's|^\./||' | grep -v '^\.$')
+
+        # 递归查找所有文件夹，-path/-prune 在顶层就排除 .git/.obsidian/.claude/.trash
+        # vault 本身显示为 /
+        FOLDERS=$(find "$TARGET" -type d \
+            \( -path "*/.git" -o -path "*/.obsidian" -o -path "*/.claude" -o -path "*/.trash" \) -prune -o \
+            -type d -print | \
+            sed "s|^$VAULT_PATH||" | \
+            while IFS= read -r relpath; do
+                # 跳过隐藏文件夹（以 . 开头）
+                dir=$(basename "$relpath")
+                case "$dir" in
+                    .*) continue ;;
+                esac
+                # vault 本身显示为 /
+                [ -z "$relpath" ] && echo "/" || echo "$relpath"
+            done | grep -v '^$')
 
         if [ "$TOTAL_ONLY" == "yes" ]; then
-            echo "$FOLDERS" | grep -v '^$' | wc -l
+            echo "$FOLDERS" | wc -l
         else
             echo "$FOLDERS"
         fi
@@ -248,8 +290,8 @@ case "$command" in
 
     "outline")
         # 提取文件大纲（标题树）
-        FILE=$(get_val "path" <<< "$args")
-        TOTAL_ONLY=$(echo "$args" | grep -q "total" && echo "yes")
+        FILE=$(get_val "path" "$@")
+        TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total" && echo "yes")
 
         if [ ! -f "$VAULT_PATH/$FILE" ]; then
             echo "File not found: $FILE"
@@ -272,8 +314,8 @@ case "$command" in
 
     "move")
         # 移动文件（优先 git mv 保持历史）
-        FROM=$(get_val "path" <<< "$args")
-        TO=$(get_val "to" <<< "$args")
+        FROM=$(get_val "path" "$@")
+        TO=$(get_val "to" "$@")
 
         if [ -d "$VAULT_PATH/.git" ]; then
             git -C "$VAULT_PATH" mv "$FROM" "$TO" && echo "Git Moved: $FROM -> $TO"
@@ -292,7 +334,7 @@ case "$command" in
         echo "  obsidian daily"
         echo "  obsidian command   id=\"plugin-command-id\""
         echo "  obsidian search    query=\"keyword\""
-        echo "  obsidian bookmark  name=\"bookmark-name\""
+        # echo "  obsidian bookmark  name=\"bookmark-name\""
         echo ""
         echo "查询类 (本地文件):"
         echo "  obsidian read      path=\"Note.md\""
