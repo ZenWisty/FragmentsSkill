@@ -234,10 +234,10 @@ case "$command" in
         # 后台静默调用 links_verify_remote_backlinks.py
         # 参数：源文件路径 + 所有出链目标路径（多行直接传，由 Python 解析）
         SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-        nohup python3 -m debugpy --listen 127.0.0.1:5678 --wait-for-client "$SCRIPT_DIR/links_verify_remote_backlinks.py" \
-            "$FILE" "$ALL_LINKS" > /dev/null 2>&1 &
-        #nohup python3 "$SCRIPT_DIR/links_verify_remote_backlinks.py" \
+        #nohup python3 -m debugpy --listen 127.0.0.1:5678 --wait-for-client "$SCRIPT_DIR/links_verify_remote_backlinks.py" \
         #    "$FILE" "$ALL_LINKS" > /dev/null 2>&1 &
+        nohup python3 "$SCRIPT_DIR/links_verify_remote_backlinks.py" \
+            "$FILE" "$ALL_LINKS" > /dev/null 2>&1 &
         ;;
 
     "backlinks")
