@@ -129,57 +129,113 @@ case "$command" in
         ;;
 
     "tags")
-        # 列出标签
+        # 列出标签（调用 C++ 索引）
         FILE=$(get_val "path" "$@")
         TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total"   && echo "yes")
         SHOW_COUNTS=$(printf '%s\n' "$@" | grep -qx "counts" && echo "yes")
         SORT_COUNT=$(printf '%s\n' "$@" | grep -qx "sort=count" && echo "yes")
 
-        TARGET=${FILE:-$VAULT_PATH}
-        ALL_TAGS=$(rg -ohP "(?<=^|[[:space:]])#[\w/]+" "$TARGET")
+        export OBSIDIAN_VAULT_PATH="$VAULT_PATH"
+        ARGS="tags"
+        [ -n "$FILE" ]     && ARGS="$ARGS --path=$FILE"
+        [ "$TOTAL_ONLY" == "yes" ]    && ARGS="$ARGS --total"
+        [ "$SHOW_COUNTS" == "yes" ]   && ARGS="$ARGS --counts"
+        [ "$SORT_COUNT" == "yes" ]    && ARGS="$ARGS --sort=count"
 
-        if [ "$TOTAL_ONLY" == "yes" ]; then
-            echo "$ALL_TAGS" | sort -u | wc -l
-        elif [ "$SHOW_COUNTS" == "yes" ]; then
-            RESULT=$(echo "$ALL_TAGS" | sort | uniq -c)
-            [ "$SORT_COUNT" == "yes" ] && RESULT=$(echo "$RESULT" | sort -nr)
-            echo "$RESULT"
-        else
-            echo "$ALL_TAGS" | sort -u
-        fi
+        SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+        "$SCRIPT_DIR/obsidian_cli" $ARGS
         ;;
 
     "tag")
-        # 搜索含特定标签的文件
+        # 搜索含特定标签的文件（调用 C++ 索引）
         TAG=$(get_val "name" "$@")
         TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total"   && echo "yes")
         VERBOSE=$(printf '%s\n' "$@" | grep -qx "verbose" && echo "yes")
 
-        # 匹配 #tag，确保前后是标签边界
-        MATCHES=$(rg -i -l "(^|[[:space:]])#$TAG([[:space:]]|$)" "$VAULT_PATH")
-        COUNT=$(echo "$MATCHES" | grep -v '^$' | wc -l)
+        export OBSIDIAN_VAULT_PATH="$VAULT_PATH"
+        ARGS="tag --name=$TAG"
+        [ "$TOTAL_ONLY" == "yes" ] && ARGS="$ARGS --total"
+        [ "$VERBOSE" == "yes" ]    && ARGS="$ARGS --verbose"
 
-        if [ "$TOTAL_ONLY" == "yes" ]; then
-            echo "$COUNT"
-        else
-            echo "Tag: #$TAG"
-            echo "Total Occurrences: $COUNT"
-            [ "$VERBOSE" == "yes" ] && echo -e "\nFiles:\n$MATCHES"
-        fi
+        SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+        "$SCRIPT_DIR/obsidian_cli" $ARGS
         ;;
 
     "links")
-        # 提取文件中的 [[link]] 链接
-        FILE=$(get_val "path" "$@")
+        # 提取文件中的 outgoing links（排除嵌入文件 ![[...]]）
+        # 直接用 bash 参数展开提取 path= 后所有内容（支持含空格路径）
         TOTAL_ONLY=$(printf '%s\n' "$@" | grep -qx "total" && echo "yes")
+        # 提取 path= 后的值（允许引号包围）
+        for arg in "$@"; do
+            case "$arg" in
+                path=*)
+                    FILE="${arg#path=}"
+                    # 去除首尾引号
+                    FILE="${FILE#\"}"
+                    FILE="${FILE%\"}"
+                    FILE="${FILE#\'}"
+                    FILE="${FILE%\'}"
+                    ;;
+            esac
+        done
 
-        LINKS=$(rg -ohP "\[\[\K[^\]|#]+" "$VAULT_PATH/$FILE")
+        if [ -z "$FILE" ]; then
+            echo "Error: path is required"
+            exit 1
+        fi
+
+        if [ ! -f "$VAULT_PATH/$FILE" ]; then
+            echo "File not found: $FILE"
+            exit 1
+        fi
+
+        # 构建 basename → 相对路径 的查找表（一次 find，全局复用）
+        # 格式: "basename|relative/path/file.md"
+        MAP_FILE="/tmp/obsidian_links_map_$$"
+        find "$VAULT_PATH" -name "*.md" | sed "s|^$VAULT_PATH/||" | \
+            while IFS= read -r rel; do
+                base=$(basename "$rel" .md)
+                echo "$base|$rel"
+            done > "$MAP_FILE"
+
+        # 用 rg 提取所有链接内容，跳过 ![[...]]（嵌入）
+        # Wiki link: [[...]] → 提取目标名，查表找实际路径
+        # Markdown link: [text](path) → 直接提取 () 内的路径
+        LINKS=$(rg -o '\[\[[^]]*\]\]' "$VAULT_PATH/$FILE" | \
+            grep -v '^{{' | \
+            sed -n 's/\[\[\(.*\)\]\]/\1/p' | \
+            while IFS= read -r inner; do
+                # 去掉 |alias，取 | 前的目标部分
+                target="${inner%%|*}"
+                # 去掉 #heading 或 #^block，取 # 前的目标部分
+                target="${target%%#*}"
+                # 查表找实际路径（精确匹配 basename）
+                match=$(grep "^$target|" "$MAP_FILE" | head -1 | cut -d'|' -f2)
+                [ -n "$match" ] && echo "$match" || echo "$target"
+            done)
+
+        # Markdown link: [text](path) — 直接提取 () 内的路径
+        MD_LINKS=$(rg -on '\[[^]]*\]\([^)]*\.md\)' "$VAULT_PATH/$FILE" | \
+            sed -n 's/.*\](\([^)]*\.md\)).*/\1/p')
+
+        # 合并去重（两种链接合并）
+        { echo "$LINKS"; echo "$MD_LINKS"; } | grep -v '^$' | sort -u > /tmp/obsidian_links_result_$$
+        ALL_LINKS=$(cat /tmp/obsidian_links_result_$$)
+
+        rm -f "$MAP_FILE" /tmp/obsidian_links_result_$$
 
         if [ "$TOTAL_ONLY" == "yes" ]; then
-            echo "$LINKS" | grep -v '^$' | wc -l
+            RESULT=$(echo "$ALL_LINKS" | wc -l)
+            echo "$RESULT"
         else
-            echo "$LINKS"
+            echo "$ALL_LINKS"
         fi
+
+        # 后台静默调用 links_verify_remote_backlinks.py
+        # 参数：源文件路径 + 所有出链目标路径（多行直接传，由 Python 解析）
+        SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+        nohup python3 "$SCRIPT_DIR/links_verify_remote_backlinks.py" \
+            "$FILE" "$ALL_LINKS" > /dev/null 2>&1 &
         ;;
 
     "backlinks")
