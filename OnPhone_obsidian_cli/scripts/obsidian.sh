@@ -241,10 +241,32 @@ case "$command" in
         ;;
 
     "backlinks")
-        # 查找反链：哪些文件链接到目标文件
-        FILE=$(get_val "path" "$@")
-        TARGET=$(basename "$FILE" .md)
-        rg -l "\[\[$TARGET\]\]" "$VAULT_PATH"
+        # 查找反链：读取目标文件 frontmatter 中的 backlinks 字段
+        for arg in "$@"; do
+            case "$arg" in
+                path=*)
+                    FILE="${arg#path=}"
+                    FILE="${FILE#\"}"; FILE="${FILE%\"}"
+                    FILE="${FILE#\'}"; FILE="${FILE%\'}"
+                    ;;
+            esac
+        done
+
+        if [ -z "$FILE" ]; then
+            echo "Error: path is required"
+            exit 1
+        fi
+
+        FULL_FILE="$VAULT_PATH/$FILE"
+        if [ ! -f "$FULL_FILE" ]; then
+            echo "File not found: $FILE"
+            exit 1
+        fi
+
+        # 后台静默调用 cli_backlinks.py
+        # 参数：源文件路径
+        SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+        python3 "$SCRIPT_DIR/cli_backlinks.py" "$FULL_FILE"
         ;;
 
     "file")
