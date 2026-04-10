@@ -14,3 +14,6 @@ __pycache__/
 markdown-tag-parser/scripts/parser_c.py
 
 **/launch.json
+
+# Exclude tests in OnPhone_task_manage
+OnPhone_task_manage/tests/
