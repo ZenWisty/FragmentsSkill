@@ -241,7 +241,8 @@ case "$command" in
         ;;
 
     "backlinks")
-        # 查找反链：读取目标文件 frontmatter 中的 backlinks 字段
+        # 查找反链：哪些文档链接到本文件
+        # 支持 wiki link [[basename]] 和 markdown link [text](path/to/basename.md)
         for arg in "$@"; do
             case "$arg" in
                 path=*)
@@ -263,10 +264,61 @@ case "$command" in
             exit 1
         fi
 
-        # 后台静默调用 cli_backlinks.py
-        # 参数：源文件路径
-        SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-        python3 "$SCRIPT_DIR/cli_backlinks.py" "$FULL_FILE"
+        # 提取 basename（不含 .md 扩展名）
+        TARGET_NAME=$(basename "$FILE" .md)
+        TARGET_FULL_NO_EXT="${FILE%.md}"
+        # 目标文件名（带 .md）
+        TARGET_WITH_EXT=$(basename "$FILE")
+
+        # 查找 wiki link: [[basename]] 或 [[dir/basename]]
+        WIKI_BACKLINKS=$(rg -l "\[\[$TARGET_NAME\]\]" "$VAULT_PATH" 2>/dev/null | \
+            grep -v "$FULL_FILE" | \
+            sed "s|$VAULT_PATH/||")
+
+        # 查找 markdown link: [text](dir/basename.md) 或 [text](basename.md)
+        MD_BACKLINKS=$(rg -l -g '*.md' "\]\($TARGET_WITH_EXT\)\]" "$VAULT_PATH" 2>/dev/null | \
+            grep -v "$FULL_FILE" | \
+            sed "s|$VAULT_PATH/||")
+
+        # markdown link 也支持不带扩展名的形式 [text](dir/basename)
+        MD_BACKLINKS2=$(rg -l -g '*.md' "\]\($TARGET_FULL_NO_EXT\)\]" "$VAULT_PATH" 2>/dev/null | \
+            grep -v "$FULL_FILE" | \
+            sed "s|$VAULT_PATH/||")
+
+        # 合并去重（两种格式找到的结果）
+        { echo "$WIKI_BACKLINKS"; echo "$MD_BACKLINKS"; echo "$MD_BACKLINKS2"; } | \
+            grep -v '^$' | sort -u
+
+        # 写入 frontmatter（如果文件中没有 backlinks 字段的话）
+        HAS_BACKLINKS_FIELD=$(rg "^backlinks:" "$FULL_FILE" | head -1)
+        if [ -z "$HAS_BACKLINKS_FIELD" ]; then
+            # 计算出的结果写入 frontmatter
+            COMPUTED=$(rg -l "\[\[$TARGET_NAME\]\]" "$VAULT_PATH" 2>/dev/null | \
+                grep -v "$FULL_FILE" | \
+                sed "s|$VAULT_PATH/||" | sort -u)
+            if [ -n "$COMPUTED" ]; then
+                # 追加 backlinks 字段到 frontmatter
+                python3 -c "
+import sys
+path = sys.argv[1]
+links = sys.argv[2:]
+content = open(path, encoding='utf-8').read()
+if links:
+    fm_line = 'backlinks:'
+    new_entries = '\n'.join(f'  - {l}' for l in links)
+    if content.startswith('---'):
+        # 插入到 frontmatter 末尾（第一个 --- 之后）
+        end = content.find('\n---', 4)
+        if end != -1:
+            new_content = content[:end] + '\n' + fm_line + '\n' + new_entries + content[end:]
+        else:
+            new_content = content
+    else:
+        new_content = '---\n' + fm_line + '\n' + new_entries + '\n---\n' + content
+    open(path, 'w', encoding='utf-8').write(new_content)
+" "$FULL_FILE" "$COMPUTED"
+            fi
+        fi
         ;;
 
     "file")
