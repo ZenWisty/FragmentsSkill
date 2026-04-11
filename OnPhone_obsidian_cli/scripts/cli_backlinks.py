@@ -97,7 +97,7 @@ def compute_backlinks(file_path: str, vault_path: str) -> list[str]:
         # 匹配 [[target]] 或 [[target|alias]] 或 [[target#heading]]
         for m in re.finditer(r'\[\[([^\]#|]+)(?:[|#][^\]]*)?\]\]', text):
             link_target = m.group(1).strip()
-            # 支持：[[笔记]] 或 [[目录/笔记]]
+            # 支持：[[笔记]] 或 [[目录/笔记]]（target_stem=笔记, target_full_stem=目录/笔记）
             if link_target == target_stem or link_target == target_full_stem or link_target == target_name:
                 rel = Path(md_path).relative_to(vault_path).as_posix()
                 if rel not in backlinks:

@@ -13,9 +13,11 @@
 #   - Advanced URI 插件 (Obsidian 中安装)
 # ==============================
 
-# --- 配置区（必须修改） ---
-VAULT="md_db"
-VAULT_PATH="$HOME/storage/shared/MyObsidianVaults/md_db"
+# --- 配置区（优先从环境变量读取，无则用默认值） ---
+: "${OBSIDIAN_VAULT:=md_db}"
+: "${OBSIDIAN_VAULT_PATH:=$HOME/storage/shared/MyObsidianVaults/md_db}"
+VAULT="$OBSIDIAN_VAULT"
+VAULT_PATH="$OBSIDIAN_VAULT_PATH"
 # -------------------------
 
 cd "$VAULT_PATH" || exit 1
@@ -270,10 +272,23 @@ case "$command" in
         # 目标文件名（带 .md）
         TARGET_WITH_EXT=$(basename "$FILE")
 
-        # 查找 wiki link: [[basename]] 或 [[dir/basename]]
-        WIKI_BACKLINKS=$(rg -l "\[\[$TARGET_NAME\]\]" "$VAULT_PATH" 2>/dev/null | \
+        # 查找 wiki link: 提取所有 [[...]] 内部内容，检查 FILE 是否以 inner.md 结尾
+        WIKI_BACKLINKS=$(rg -l '\[\[' "$VAULT_PATH" 2>/dev/null | \
             grep -v "$FULL_FILE" | \
-            sed "s|$VAULT_PATH/||")
+            while read -r f; do
+                # 提取该文件所有 wikilink 内部内容（去掉 [[ 和 |alias #heading）
+                rg -o '\[\[([^\]|]+)' "$f" 2>/dev/null | sed 's/\[\[//' | \
+                while read -r inner; do
+                    # inner 如果不以 .md 结尾就加上
+                    LINK="$inner"
+                    [[ "$LINK" != *.md ]] && LINK="${LINK}.md"
+                    # FILE 以 LINK 结尾则匹配
+                    if [[ "$FILE" == *"$LINK" ]]; then
+                        echo "$f"
+                    fi
+                done
+            done | \
+            sed "s|$VAULT_PATH/||" | sort -u)
 
         # 查找 markdown link: [text](dir/basename.md) 或 [text](basename.md)
         MD_BACKLINKS=$(rg -l -g '*.md' "\]\($TARGET_WITH_EXT\)\]" "$VAULT_PATH" 2>/dev/null | \
@@ -293,7 +308,7 @@ case "$command" in
         HAS_BACKLINKS_FIELD=$(rg "^backlinks:" "$FULL_FILE" | head -1)
         if [ -z "$HAS_BACKLINKS_FIELD" ]; then
             # 计算出的结果写入 frontmatter
-            COMPUTED=$(rg -l "\[\[$TARGET_NAME\]\]" "$VAULT_PATH" 2>/dev/null | \
+            COMPUTED=$(rg -l "\[\[${TARGET_NAME}\]\]|\[\[${TARGET_FULL_NO_EXT}\]\]" "$VAULT_PATH" 2>/dev/null | \
                 grep -v "$FULL_FILE" | \
                 sed "s|$VAULT_PATH/||" | sort -u)
             if [ -n "$COMPUTED" ]; then
