@@ -1,6 +1,17 @@
-[app]
+[buildsystem]
+requires = ["briefcase"]
+build-backend = "briefcase.integrations.gradle.BriefcaseGradleBuildSystem"
+
+[project]
 name = "ReviewHelperApp"
+version = "0.0.1"
+description = "Helper app for Obsidian task review"
+license = "MIT"
+
+[app]
+name = "reviewhelperapp"
 bundle = "com.obsidian.task"
 version = "0.0.1"
 description = "Helper app for Obsidian task review"
+icon = "src/reviewhelperapp/resources/reviewhelperapp"
 sources = ["src/reviewhelperapp"]
