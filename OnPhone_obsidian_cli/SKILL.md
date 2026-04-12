@@ -1,5 +1,5 @@
 ---
-name: obsidian-android-cli
+name: OnPhone_obsidian_cli
 description: |
   Obsidian CLI for Android/Termux. 当用户在 Android/鸿蒙手机上通过 Termux 操作 Obsidian 库时触发，包括：vault name、obsidian command、advanced uri (obsidian://advanced-uri)、或任何涉及移动端 Obsidian 文件管理的请求。支持的命令分为两类 — 动作类 (open/append/prepend/daily/command/search/bookmark) 通过 Advanced URI 插件执行，以及查询类 (read/tags/tag/links/backlinks/file/files/folder/folders/outline/move) 通过本地 ripgrep/find/git 操作库文件。当用户提到"Android Obsidian"、"Termux Obsidian"、"obsidian CLI"、"Advanced URI"时也触发。
 ---

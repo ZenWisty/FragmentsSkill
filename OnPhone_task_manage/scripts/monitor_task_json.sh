@@ -12,7 +12,10 @@ fi
 echo $$ > "$PID_FILE"
 
 TASK_FILE="$HOME/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json"
-ABORT_FILE="$(dirname "$TASK_FILE")/task_abort.json" # 定义 abort 文件的路径
+ABORT_FILE="$(dirname "$TASK_FILE")/task_abort.json"
+REVIEW_PENDING_FILE="$(dirname "$TASK_FILE")/review_pending.json"
+REVIEW_RESPONSE_FILE="$(dirname "$TASK_FILE")/review_response.json"
+REVIEW_HELPER_SCRIPT="$HOME/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/ReviewHelperApp/src/reviewhelperapp/app.py"
 
 echo "🚀 动态任务调度服务已启动，正在监听: $TASK_FILE"
 
@@ -50,73 +53,186 @@ while true; do
     # 核心逻辑分支：与现在时间只差十分钟以内 (<= 600秒)
     # ==================================================
     if [ "$WAIT_SEC" -le 600 ]; then
-        echo "⏰ 距目标时间已不足 10 分钟！开始直接执行目标任务..."
-        
-        TASK_PATH=$(jq -r '.[0].path // empty' "$TASK_FILE")
-        TASK_TAG=$(jq -r '.[0].tag_content // empty' "$TASK_FILE")
-        TASK_ACTION=$(jq -r '.[0].action // empty' "$TASK_FILE")
-        
-        echo "====> 正在调用 review_job_launch.py 处理文件: $TASK_PATH"
-        
-        # 阻塞调用 Python 脚本
-        python review_job_launch.py "$TASK_PATH" "$TASK_TAG" "$TASK_ACTION"
-
-        echo "✅ review_job_launch.py 执行完毕！"
-
-        # 先把刚执行完的第一条正常任务出队
-        TMP_FILE=$(mktemp)
-        jq '.[1:]' "$TASK_FILE" > "$TMP_FILE" && mv "$TMP_FILE" "$TASK_FILE"
+        echo "⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App..."
 
         # ==================================================
-        # 【新增逻辑】：扫描并剥离已经过期的堆积任务
+        # 步骤1：收集所有到期任务（当前时间 <= 任务时间 + 10分钟）
         # ==================================================
-        echo "🔍 正在检查是否有已错失时间的过期任务..."
         NOW_SEC=$(date +%s)
         TASK_COUNT=$(jq '. | length' "$TASK_FILE")
-        EXPIRED_COUNT=0
-        
-        # 从前往后遍历，找到连续过期任务的数量
+        DUE_COUNT=0
+
         for (( i=0; i<$TASK_COUNT; i++ )); do
             T_TIME=$(jq -r ".[$i].task_time // empty" "$TASK_FILE")
-            if [ -z "$T_TIME" ]; then break; fi
-            
+            [ -z "$T_TIME" ] && break
+
             T_SEC=$(date -d "$T_TIME" +%s 2>/dev/null)
-            # 如果解析成功，并且任务设定时间小于当前真实时间，说明已过期
-            if[ -n "$T_SEC" ] && [ "$T_SEC" -lt "$NOW_SEC" ]; then
+            [ -z "$T_SEC" ] && break
+
+            # 任务时间 <= 当前时间 + 600秒 视为到期
+            if [ "$T_SEC" -le $((NOW_SEC + 600)) ]; then
+                DUE_COUNT=$((i+1))
+            else
+                break
+            fi
+        done
+
+        if [ "$DUE_COUNT" -eq 0 ]; then
+            echo "没有找到到期任务，跳过..."
+            sleep 1
+            continue
+        fi
+
+        echo "📋 发现 $DUE_COUNT 个到期任务，正在写入待确认队列..."
+
+        # ==================================================
+        # 步骤2：提取到期任务，写入 review_pending.json
+        # ==================================================
+        TMP_DUE=$(mktemp)
+        jq --argjson idx "$DUE_COUNT" '.[0:$idx]' "$TASK_FILE" > "$TMP_DUE"
+
+        # 为每个任务生成 UUID 并写入 pending
+        python3 - << 'PYEOF'
+import json
+import sys
+import uuid
+
+due_tasks = json.load(open("%s" % "$TMP_DUE"))
+pending = []
+
+for task in due_tasks:
+    task["task_id"] = str(uuid.uuid4())
+    task["added_at"] = "%s" % "$(date +%%Y-%%m-%%d %%H:%%M:%%S)"
+    pending.append(task)
+
+with open("%s" % "$REVIEW_PENDING_FILE", "w") as f:
+    json.dump(pending, f, indent=2, ensure_ascii=False)
+
+print(f"已写入 {len(pending)} 个任务到 review_pending.json")
+PYEOF
+
+        rm -f "$TMP_DUE"
+
+        # ==================================================
+        # 步骤3：唤起 ReviewHelper App
+        # ==================================================
+        echo "🚀 唤起 ReviewHelper App，等待用户交互..."
+        am start -n com.obsidian.task/.MainActivity > /dev/null 2>&1 || \
+        am start -a android.intent.action.MAIN -n com.obsidian.task > /dev/null 2>&1 || \
+        echo "⚠️ 无法唤起 App，请确保 ReviewHelperApp 已安装"
+
+        # ==================================================
+        # 步骤4：等待用户操作（最多等10分钟）
+        # ==================================================
+        echo "⏳ 等待用户完成操作（超时10分钟）..."
+
+        # 用 inotifywait 等待 response 文件变化
+        if inotifywait -q -t 600 -e close_write "$REVIEW_RESPONSE_FILE" 2>/dev/null; then
+            echo "📥 检测到用户操作响应，开始处理..."
+        else
+            echo "⏰ 等待超时，视为用户跳过所有任务"
+        fi
+
+        # ==================================================
+        # 步骤5：读取所有响应，逐个处理
+        # ==================================================
+        if [ -f "$REVIEW_RESPONSE_FILE" ]; then
+            RESPONSE_COUNT=$(jq '. | length' "$REVIEW_RESPONSE_FILE" 2>/dev/null || echo 0)
+
+            for (( r=0; r<$RESPONSE_COUNT; r++ )); do
+                RESP_TASK_ID=$(jq -r ".[$r].task_id // empty" "$REVIEW_RESPONSE_FILE")
+                RESP_ACTION=$(jq -r ".[$r].action // empty" "$REVIEW_RESPONSE_FILE")
+                RESP_REVIEW_TYPE=$(jq -r ".[$r].review_type // empty" "$REVIEW_RESPONSE_FILE")
+                RESP_PATH=$(jq -r ".[$r].path // empty" "$REVIEW_RESPONSE_FILE")
+                RESP_TAG=$(jq -r ".[$r].tag_content // empty" "$REVIEW_RESPONSE_FILE")
+                RESP_ORIG_ACTION=$(jq -r ".[$r].action_script // empty" "$REVIEW_RESPONSE_FILE")
+
+                if [ -z "$RESP_TASK_ID" ] || [ -z "$RESP_ACTION" ] || [ -z "$RESP_PATH" ]; then
+                    continue
+                fi
+
+                echo "  处理响应: path=$RESP_PATH, action=$RESP_ACTION"
+
+                if [ "$RESP_ACTION" = "complete" ]; then
+                    echo "  ✅ 执行完成：$RESP_PATH"
+                    # 调用 review_job_launch.py 追加时间戳
+                    if [ -n "$RESP_PATH" ] && [ -n "$RESP_TAG" ]; then
+                        python3 "$RESP_ORIG_ACTION" "$RESP_PATH" "$RESP_TAG" > /dev/null 2>&1
+                    fi
+                    # 从 task.json 移除该任务（按 path + tag_content 匹配）
+                    TMP_REMOVE=$(mktemp)
+                    jq ".[] | select(.path != \"$RESP_PATH\" or .tag_content != \"$RESP_TAG\")" "$TASK_FILE" > "$TMP_REMOVE" || echo "[]" > "$TMP_REMOVE"
+                    mv "$TMP_REMOVE" "$TASK_FILE"
+                else
+                    echo "  ⏭️ 用户跳过：$RESP_PATH"
+                    # 从 task.json 移除该任务
+                    TMP_REMOVE=$(mktemp)
+                    jq ".[] | select(.path != \"$RESP_PATH\" or .tag_content != \"$RESP_TAG\")" "$TASK_FILE" > "$TMP_REMOVE" || echo "[]" > "$TMP_REMOVE"
+                    mv "$TMP_REMOVE" "$TASK_FILE"
+                    # 追加到 task_abort.json（使用原始任务信息，不含 task_id）
+                    if [ ! -f "$ABORT_FILE" ]; then
+                        echo "[]" > "$ABORT_FILE"
+                    fi
+                    TMP_ABORT=$(mktemp)
+                    jq ".[] | select(.path == \"$RESP_PATH\" and .tag_content == \"$RESP_TAG\")" "$TASK_FILE" > "$TMP_ABORT" 2>/dev/null || echo "{}" > "$TMP_ABORT"
+                    # 如果abort文件是空数组[]
+                    if [ ! -s "$TMP_ABORT" ] || [ "$(cat "$TMP_ABORT")" = "[]" ] || [ "$(cat "$TMP_ABORT")" = "" ]; then
+                        # 构造一个简化的abort任务对象
+                        echo "[{\"path\":\"$RESP_PATH\",\"tag_content\":\"$RESP_TAG\",\"task_time\":\"$(date +%Y-%m-%d\ %H:%M:%S)\"}]" > "$TMP_ABORT"
+                    fi
+                    jq -n --slurpfile abort "$ABORT_FILE" --slurpfile new "$TMP_ABORT" '$abort[0] + $new[0]' > "$TMP_REMOVE" && mv "$TMP_REMOVE" "$ABORT_FILE"
+                    rm -f "$TMP_ABORT"
+                fi
+            done
+
+            # 清空 response 文件
+            echo "[]" > "$REVIEW_RESPONSE_FILE"
+        fi
+
+        # 清空 pending 文件
+        echo "[]" > "$REVIEW_PENDING_FILE"
+
+        # ==================================================
+        # 步骤6：扫描剩余任务中是否还有过期堆积的
+        # ==================================================
+        echo "🔍 检查是否有新的过期任务..."
+        NOW_SEC=$(date +%s)
+        TASK_COUNT=$(jq '. | length' "$TASK_FILE" 2>/dev/null || echo 0)
+        EXPIRED_COUNT=0
+
+        for (( i=0; i<$TASK_COUNT; i++ )); do
+            T_TIME=$(jq -r ".[$i].task_time // empty" "$TASK_FILE")
+            [ -z "$T_TIME" ] && break
+
+            T_SEC=$(date -d "$T_TIME" +%s 2>/dev/null)
+            if [ -n "$T_SEC" ] && [ "$T_SEC" -lt "$NOW_SEC" ]; then
                 EXPIRED_COUNT=$((i+1))
             else
-                # 由于时间是排序的，只要碰到一个没过期的，后面的绝对没过期，直接打断循环！
-                break 
+                break
             fi
         done
 
         if [ "$EXPIRED_COUNT" -gt 0 ]; then
-            echo "🗑️ 发现 $EXPIRED_COUNT 个已过期任务，正在移至 task_abort.json..."
-            
-            # 如果 abort 文件不存在，先初始化一个空数组
+            echo "🗑️ 发现 $EXPIRED_COUNT 个过期任务，移至 task_abort.json..."
+
             if [ ! -f "$ABORT_FILE" ]; then
                 echo "[]" > "$ABORT_FILE"
             fi
-            
-            # 1. 提取出这些过期的任务
+
             TMP_ABORT=$(mktemp)
             jq --argjson idx "$EXPIRED_COUNT" '.[0:$idx]' "$TASK_FILE" > "$TMP_ABORT"
-            
-            # 2. 将它们追加合并到 task_abort.json 的数组中
+
             TMP_MERGE=$(mktemp)
             jq -s '.[0] + .[1]' "$ABORT_FILE" "$TMP_ABORT" > "$TMP_MERGE"
             mv "$TMP_MERGE" "$ABORT_FILE"
-            
-            # 3. 将它们从现有的 task.json 中切除掉
-            jq --argjson idx "$EXPIRED_COUNT" '.[$idx:]' "$TASK_FILE" > "$TMP_FILE"
-            mv "$TMP_FILE" "$TASK_FILE"
-            
+
+            jq --argjson idx "$EXPIRED_COUNT" '.[$idx:]' "$TASK_FILE" > "$TMP_MERGE" && mv "$TMP_MERGE" "$TASK_FILE"
             rm -f "$TMP_ABORT"
         fi
         # ==================================================
-        
-        echo "准备拿取现在 task.json 中的(新)第一条信息..."
-        sleep 1 # 防抖缓冲
+
+        echo "✅ 本轮处理完成，继续监听..."
+        sleep 1
         continue
 
     else

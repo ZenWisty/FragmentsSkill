@@ -1,0 +1,6 @@
+[app]
+name = "ReviewHelperApp"
+bundle = "com.obsidian.task"
+version = "0.0.1"
+description = "Helper app for Obsidian task review"
+sources = ["src/reviewhelperapp"]
