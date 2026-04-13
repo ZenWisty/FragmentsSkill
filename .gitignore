@@ -17,3 +17,5 @@ markdown-tag-parser/scripts/parser_c.py
 
 # Exclude tests in OnPhone_task_manage
 OnPhone_task_manage/tests/
+
+**/build/
