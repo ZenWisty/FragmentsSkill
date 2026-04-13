@@ -383,9 +383,13 @@ class ReviewHelperApp:
 
 def main():
     """Entry point."""
+    from datetime import datetime
     # Clear log on startup
-    with open(LOG_FILE, 'w') as f:
-        f.write(f"App started at {os.popen('date').read().strip()}\n")
+    try:
+        with open(LOG_FILE, 'w') as f:
+            f.write(f"App started at {datetime.now().isoformat()}\n")
+    except Exception as e:
+        pass  # Cannot write log, continue anyway
     app = ReviewHelperApp()
     app.run()
 
