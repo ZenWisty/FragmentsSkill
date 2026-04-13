@@ -16,8 +16,12 @@ import subprocess
 import uuid
 from typing import Dict, List
 
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+# Ensure the parent of "reviewhelperapp" package is on sys.path.
+# This is needed because BeeWare's PythonActivity bootstrap may not include it.
+_pkg_dir = os.path.dirname(__file__)  # directory containing this file (reviewhelperapp/)
+_parent = os.path.dirname(_pkg_dir)  # parent (should contain reviewhelperapp/ as a package)
+if _parent not in sys.path:
+    sys.path.insert(0, _parent)
 
 from reviewhelperapp.communication import (
     read_pending, write_response
