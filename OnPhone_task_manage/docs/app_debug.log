@@ -1,0 +1,6 @@
+platform=android
+android check=True
+pending_count=1
+task: b654a430-e090-4026-8e46-5cfd8cdeb54d /storage/emulated/0/MyObsidianVaults/test_note.md
+communication OK
+notification_handler init OK, android=False
