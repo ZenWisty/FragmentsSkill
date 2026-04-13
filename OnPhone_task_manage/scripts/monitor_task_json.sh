@@ -92,20 +92,21 @@ while true; do
         jq --argjson idx "$DUE_COUNT" '.[0:$idx]' "$TASK_FILE" > "$TMP_DUE"
 
         # 为每个任务生成 UUID 并写入 pending
-        python3 - << 'PYEOF'
+        python3 - << PYEOF
 import json
 import sys
 import uuid
+from datetime import datetime
 
-due_tasks = json.load(open("%s" % "$TMP_DUE"))
+due_tasks = json.load(open("$TMP_DUE"))
 pending = []
 
 for task in due_tasks:
     task["task_id"] = str(uuid.uuid4())
-    task["added_at"] = "%s" % "$(date +%%Y-%%m-%%d %%H:%%M:%%S)"
+    task["added_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     pending.append(task)
 
-with open("%s" % "$REVIEW_PENDING_FILE", "w") as f:
+with open("$REVIEW_PENDING_FILE", "w") as f:
     json.dump(pending, f, indent=2, ensure_ascii=False)
 
 print(f"已写入 {len(pending)} 个任务到 review_pending.json")
@@ -117,8 +118,9 @@ PYEOF
         # 步骤3：唤起 ReviewHelper App
         # ==================================================
         echo "🚀 唤起 ReviewHelper App，等待用户交互..."
-        am start -n com.obsidian.task/.MainActivity > /dev/null 2>&1 || \
-        am start -a android.intent.action.MAIN -n com.obsidian.task > /dev/null 2>&1 || \
+        am start -n com.obsidian.task.reviewhelperapp/org.kivy.android.PythonActivity > /dev/null 2>&1 || \
+        am start -n com.obsidian.task.reviewhelperapp/.MainActivity > /dev/null 2>&1 || \
+        am start -a android.intent.action.MAIN -n com.obsidian.task.reviewhelperapp > /dev/null 2>&1 || \
         echo "⚠️ 无法唤起 App，请确保 ReviewHelperApp 已安装"
 
         # ==================================================

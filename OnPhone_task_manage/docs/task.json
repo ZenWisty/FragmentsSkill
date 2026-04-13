@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "task_time": "2026-04-13 11:56:00",
+    "path": "/storage/emulated/0/MyObsidianVaults/test_note.md",
+    "tag_content": "[##[review: 2026-04-01 10:00:00] ##]",
+    "action": "/storage/emulated/0/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/scripts/review_job_launch.py"
+  }
+]
