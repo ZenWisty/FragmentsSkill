@@ -1,0 +1,27 @@
+旧 PID 文件残留，已清理
+👀 正在静默监控 .md 文件的改动...
+Setting up watches.  Beware: since -r was given, this may take a while!
+Watches established.
+📝 拦截到被修改的笔记: /storage/emulated/0/MyObsidianVaults/md_db/TestReview.md
+✅ task.json 已更新并排序: TestReview.md (新增有效任务 1 个)
+💤 task_longterm.json 无实质变动。
+📝 拦截到被修改的笔记: /storage/emulated/0/MyObsidianVaults/md_db/.trash/TestReview.md
+✅ task.json 已更新并排序: TestReview.md (新增有效任务 1 个)
+💤 task_longterm.json 无实质变动。
+Watching new directory /storage/emulated/0/MyObsidianVaults/md_db/.git/objects/89/
+Watching new directory /storage/emulated/0/MyObsidianVaults/md_db/.git/objects/26/
+Watching new directory /storage/emulated/0/MyObsidianVaults/md_db/.git/objects/be/
+Watching new directory /storage/emulated/0/MyObsidianVaults/md_db/.git/objects/8d/
+📝 拦截到被修改的笔记: /storage/emulated/0/MyObsidianVaults/md_db/软件流水线/obsidian/auto_sync & task arrange.md
+Traceback (most recent call last):
+  File "/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/scripts/scan_task_in_file.py", line 135, in <module>
+    next_time_str = func1(past_times)
+  File "/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/scripts/scan_task_in_file.py", line 58, in func1
+    t = datetime.strptime(past_times[0], "%Y-%m-%d %H:%M:%S")
+  File "/data/data/com.termux/files/usr/lib/python3.13/_strptime.py", line 789, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+                                    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.13/_strptime.py", line 555, in _strptime
+    raise ValueError("time data %r does not match format %r" %
+                     (data_string, format))
+ValueError: time data '2026-04-01' does not match format '%Y-%m-%d %H:%M:%S'

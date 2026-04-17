@@ -1,0 +1,380 @@
+=== Tue Apr 14 17:25:43 CST 2026 重新开始 ===
+🚀 动态任务调度服务已启动，正在监听: /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 1 个到期任务，正在写入待确认队列...
+已写入 1 个任务到 review_pending.json
+通知服务未运行，正在启动...
+通知服务已启动，监听 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json
+已显示通知: TestNote.md (id=1776158755050904852)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote.md (id=1776158785514514743)
+已显示通知: TestNote.md (id=1776158815980263176)
+已显示通知: TestNote.md (id=1776158846448106401)
+已显示通知: TestNote.md (id=1776158876882163167)
+已显示通知: TestNote.md (id=1776158907291145454)
+已显示通知: TestNote.md (id=1776158937685448574)
+已显示通知: TestNote.md (id=1776158968114726174)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TestNote.md, action=complete
+  ✅ 执行完成：TestNote.md
+🔍 检查是否有新的过期任务...
+scripts/monitor_task_json.sh: line 216: ((: i<: arithmetic syntax error: operand expected (error token is "<")
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+🚀 动态任务调度服务已启动，正在监听: /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 1 个到期任务，正在写入待确认队列...
+已写入 1 个任务到 review_pending.json
+通知服务未运行，正在启动...
+通知服务已启动，监听 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json
+已显示通知: TestNote.md (id=1776159474506669847)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote.md (id=1776159504853187030)
+已显示通知: TestNote.md (id=1776159535314207337)
+已显示通知: TestNote.md (id=1776159565755923479)
+已显示通知: TestNote.md (id=1776159596180511495)
+已显示通知: TestNote.md (id=1776159626643937011)
+已显示通知: TestNote.md (id=1776159657075106798)
+已显示通知: TestNote.md (id=1776159687536925022)
+已显示通知: TestNote.md (id=1776159718015816164)
+已显示通知: TestNote.md (id=1776159748489644805)
+已显示通知: TestNote.md (id=1776159778976233863)
+已显示通知: TestNote.md (id=1776159809484079171)
+已显示通知: TestNote.md (id=1776159839952151562)
+已显示通知: TestNote.md (id=1776159870435670828)
+已显示通知: TestNote.md (id=1776159900897333844)
+已显示通知: TestNote.md (id=1776159931313421339)
+已显示通知: TestNote.md (id=1776159961779931231)
+已显示通知: TestNote.md (id=1776159992185981747)
+已显示通知: TestNote.md (id=1776160022653157263)
+已显示通知: TestNote.md (id=1776160053131348404)
+⏰ 等待超时，视为用户跳过所有任务
+🔍 检查是否有新的过期任务...
+🗑️ 发现 1 个过期任务，移至 task_abort.json...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 1 个到期任务，正在写入待确认队列...
+已写入 1 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 18755)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote.md (id=1776160249378865041)
+已显示通知: TestNote.md (id=1776160279815373890)
+已显示通知: TestNote.md (id=1776160310285115032)
+已显示通知: TestNote.md (id=1776160340759722319)
+已显示通知: TestNote.md (id=1776160371247459814)
+已显示通知: TestNote.md (id=1776160401710954601)
+已显示通知: TestNote.md (id=1776160432128206159)
+已显示通知: TestNote.md (id=1776160462589672300)
+已显示通知: TestNote.md (id=1776160493030509795)
+已显示通知: TestNote.md (id=1776160523495990520)
+已显示通知: TestNote.md (id=1776160553981889474)
+已显示通知: TestNote.md (id=1776160584460704052)
+已显示通知: TestNote.md (id=1776160614916123839)
+已显示通知: TestNote.md (id=1776160645377722793)
+已显示通知: TestNote.md (id=1776160675852627997)
+已显示通知: TestNote.md (id=1776160706315176430)
+已显示通知: TestNote.md (id=1776160736770693092)
+已显示通知: TestNote.md (id=1776160767234582670)
+已显示通知: TestNote.md (id=1776160797717580061)
+已显示通知: TestNote.md (id=1776160828195065473)
+⏰ 等待超时，视为用户跳过所有任务
+🔍 检查是否有新的过期任务...
+🗑️ 发现 1 个过期任务，移至 task_abort.json...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+🚀 动态任务调度服务已启动，正在监听: /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 1 个到期任务，正在写入待确认队列...
+已写入 1 个任务到 review_pending.json
+通知服务未运行，正在启动...
+通知服务已启动，监听 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json
+已显示通知: TestNote.md (id=1776160972533765451)
+⏳ 等待用户完成操作（超时10分钟）...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TestNote.md, action=skip
+  ⏭️ 用户跳过：TestNote.md
+🔍 检查是否有新的过期任务...
+scripts/monitor_task_json.sh: line 216: ((: i<: arithmetic syntax error: operand expected (error token is "<")
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 1 个到期任务，正在写入待确认队列...
+已写入 1 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 23890)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote2.md (id=1776161025418802423)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TestNote2.md, action=skip
+  ⏭️ 用户跳过：TestNote2.md
+🔍 检查是否有新的过期任务...
+scripts/monitor_task_json.sh: line 216: ((: i<: arithmetic syntax error: operand expected (error token is "<")
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 1 个到期任务，正在写入待确认队列...
+已写入 1 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 23890)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote3.md (id=1776161064250043562)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TestNote3.md, action=complete
+  ✅ 执行完成：TestNote3.md
+🔍 检查是否有新的过期任务...
+scripts/monitor_task_json.sh: line 216: ((: i<: arithmetic syntax error: operand expected (error token is "<")
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 23890)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote5min.md (id=1776161128656896157)
+已显示通知: TestNote8min.md (id=1776161128865587303)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TestNote5min.md, action=complete
+  ✅ 执行完成：TestNote5min.md
+🔍 检查是否有新的过期任务...
+jq: error (at /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json:6): Cannot index object with number
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 23890)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TestNote5min.md (id=1776161207686553957)
+已显示通知: TestNote8min.md (id=1776161207884023749)
+已显示通知: TestNote5min.md (id=1776161238330518015)
+已显示通知: TestNote8min.md (id=1776161238548915932)
+已显示通知: TestNote5min.md (id=1776161268838161240)
+已显示通知: TestNote8min.md (id=1776161269021360198)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TestNote8min.md, action=skip
+  ⏭️ 用户跳过：TestNote8min.md
+jq: error (at <unknown>): array ([{"path":"T...) and object ({}) cannot be added
+🔍 检查是否有新的过期任务...
+jq: error (at /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json:6): Cannot index object with number
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+🚀 动态任务调度服务已启动，正在监听: /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+通知服务未运行，正在启动...
+通知服务已启动，监听 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json
+已显示通知: TaskA.md (id=1776161660796394513)
+已显示通知: TaskB.md (id=1776161660983162742)
+⏳ 等待用户完成操作（超时10分钟）...
+已显示通知: TaskA.md (id=1776161691450352321)
+已显示通知: TaskB.md (id=1776161691661549196)
+已显示通知: TaskA.md (id=1776161722117698670)
+已显示通知: TaskB.md (id=1776161722332349712)
+已显示通知: TaskA.md (id=1776161752671672103)
+已显示通知: TaskB.md (id=1776161752869952832)
+已显示通知: TaskA.md (id=1776161783280087724)
+已显示通知: TaskB.md (id=1776161783475505953)
+已显示通知: TaskA.md (id=1776161813897850740)
+已显示通知: TaskB.md (id=1776161814088009594)
+已显示通知: TaskA.md (id=1776161844476099693)
+已显示通知: TaskB.md (id=1776161844726601777)
+已显示通知: TaskA.md (id=1776161875187010105)
+已显示通知: TaskB.md (id=1776161875411160626)
+已显示通知: TaskA.md (id=1776161905870195517)
+已显示通知: TaskB.md (id=1776161906057925726)
+已显示通知: TaskA.md (id=1776161936514136658)
+已显示通知: TaskB.md (id=1776161936725880408)
+已显示通知: TaskA.md (id=1776161967198538216)
+已显示通知: TaskB.md (id=1776161967415149154)
+已显示通知: TaskA.md (id=1776161997900466857)
+已显示通知: TaskB.md (id=1776161998170606962)
+已显示通知: TaskA.md (id=1776162028636910603)
+已显示通知: TaskB.md (id=1776162028849476749)
+已显示通知: TaskA.md (id=1776162059305457994)
+已显示通知: TaskB.md (id=1776162059514001223)
+已显示通知: TaskA.md (id=1776162089976367885)
+已显示通知: TaskB.md (id=1776162090208245489)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+📥 检测到用户操作响应，开始处理...
+  处理响应: path=TaskB.md, action=skip
+  ⏭️ 用户跳过：TaskB.md
+jq: error (at <unknown>): array ([{"path":"T...) and object ({}) cannot be added
+🔍 检查是否有新的过期任务...
+jq: error (at /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json:6): Cannot index object with number
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+🚀 动态任务调度服务已启动，正在监听: /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+通知服务未运行，正在启动...
+通知服务已启动，监听 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json
+已显示通知: TaskA.md (id=1776163736394686905)
+已显示通知: TaskB.md (id=1776163736641001488)
+⏳ 正在等待用户操作...
+已显示通知: TaskA.md (id=1776163768142308775)
+已显示通知: TaskB.md (id=1776163768950900441)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskB.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.3IoNWYZbFF:7): array ([{"path":"T...) and object ({"action":"...) cannot be added
+已显示通知: TaskA.md (id=1776163799238729603)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskA.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.8aMTRUZDXx:7): array ([{"path":"T...) and object ({"action":"...) cannot be added
+✅ 该批次任务处理完毕。
+🔍 检查是否有新的过期任务...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 4 个到期任务，正在写入待确认队列...
+已写入 4 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 7087)
+⏳ 正在等待用户操作...
+已显示通知: TaskA.md (id=1776163872317962405)
+已显示通知: TaskB.md (id=1776163872560664488)
+已显示通知: TaskC.md (id=1776163872766978551)
+已显示通知: TaskD.md (id=1776163873024766571)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskD.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.XOQzGlPUOr:7): array ([{"path":"T...) and object ({"action":"...) cannot be added
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskC.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.ZOWpgBCzSU:7): array ([{"path":"T...) and object ({"action":"...) cannot be added
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [complete] TaskB.md
+已显示通知: TaskA.md (id=1776163903416338442)
+已显示通知: TaskA.md (id=1776163933837888958)
+已显示通知: TaskA.md (id=1776163964151183745)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [complete] TaskA.md
+✅ 该批次任务处理完毕。
+🔍 检查是否有新的过期任务...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 7087)
+⏳ 正在等待用户操作...
+已显示通知: TaskA.md (id=1776164207382473291)
+已显示通知: TaskB.md (id=1776164207593842041)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskB.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.hRJhzWWY15:7): array ([]) and object ({"action":"...) cannot be added
+已显示通知: TaskA.md (id=1776164238029698286)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskA.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.N5VgpLmrde:7): array ([]) and object ({"action":"...) cannot be added
+✅ 该批次任务处理完毕。
+🔍 检查是否有新的过期任务...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 7087)
+⏳ 正在等待用户操作...
+已显示通知: TaskC.md (id=1776164319485349316)
+已显示通知: TaskD.md (id=1776164319691193587)
+已显示通知: TaskC.md (id=1776164350126533686)
+已显示通知: TaskD.md (id=1776164350327912332)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [complete] TaskD.md
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskC.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.BNDpF8VmXl:7): array ([]) and object ({"action":"...) cannot be added
+✅ 该批次任务处理完毕。
+🔍 检查是否有新的过期任务...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 
+通知服务已在运行 (PID 7087)
+⏳ 正在等待用户操作...
+已显示通知: TaskE.md (id=1776164510922978974)
+已显示通知: TaskF.md (id=1776164511116993036)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskF.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.av9JYXyirT:7): array ([]) and object ({"action":"...) cannot be added
+已显示通知: TaskE.md (id=1776164541374828449)
+已显示通知: TaskE.md (id=1776164571798095111)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskF.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.UT4oKrM5xu:7): array ([]) and object ({"action":"...) cannot be added
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+已显示通知: TaskE.md (id=1776164602267533127)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskE.md
+jq: error (at /data/data/com.termux/files/usr/tmp/tmp.cL5UorbLWI:7): array ([]) and object ({"action":"...) cannot be added
+✅ 该批次任务处理完毕。
+🔍 检查是否有新的过期任务...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+🚀 动态任务调度服务已启动，正在监听: /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+⏰ 距目标时间已不足 10 分钟！将所有到期任务转入 ReviewHelper App...
+📋 发现 2 个到期任务，正在写入待确认队列...
+已写入 2 个任务到 review_pending.json
+通知服务未运行，正在启动...
+通知服务已启动，监听 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json
+已显示通知: TaskX.md (id=1776215386788641045)
+已显示通知: TaskY.md (id=1776215387043840004)
+⏳ 正在等待用户操作...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskY.md
+  ⏭️ 用户跳过，存入 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task_abort.json
+已显示通知: TaskX.md (id=1776215417499885832)
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_response.json CLOSE_WRITE,CLOSE 
+  处理响应: [skip] TaskX.md
+  ⏭️ 用户跳过，存入 /home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task_abort.json
+🔍 检查是否有新的过期任务...
+✅ 本轮处理完成，继续监听...
+💤 任务列表为空，挂起休眠，等待 task.json 更新...
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/task.json CLOSE_WRITE,CLOSE 
+/home/storage/shared/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/docs/review_pending.json CLOSE_WRITE,CLOSE 

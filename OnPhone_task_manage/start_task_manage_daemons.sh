@@ -54,7 +54,7 @@ start_daemon() {
 }
 
 # 逐个启动（polling 放第一位，因为其他三个是事件驱动的）
-start_daemon "polling_manage_longterm_task" "$SCRIPT_DIR/polling_manage_longterm_task.sh"
+#start_daemon "polling_manage_longterm_task" "$SCRIPT_DIR/polling_manage_longterm_task.sh"
 start_daemon "monitor_task_json"           "$SCRIPT_DIR/monitor_task_json.sh"
 start_daemon "monitor_task_abort_json"     "$SCRIPT_DIR/monitor_task_abort_json.sh"
 start_daemon "monitor_vault_md"            "$SCRIPT_DIR/monitor_vault_md.sh"

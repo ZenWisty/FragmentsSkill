@@ -1,11 +1,1 @@
-[
-  {
-    "task_id": "b654a430-e090-4026-8e46-5cfd8cdeb54d",
-    "action": "complete",
-    "timestamp": "2026-04-13 12:33:16",
-    "review_type": "simple",
-    "path": "/storage/emulated/0/MyObsidianVaults/test_note.md",
-    "tag_content": "[##[review: 2026-04-01 10:00:00] ##]",
-    "action_script": "/storage/emulated/0/MyObsidianVaults/scripts_db/FragmentsSkill/OnPhone_task_manage/scripts/review_job_launch.py"
-  }
-]
+[]

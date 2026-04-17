@@ -42,6 +42,23 @@ bash stop_task_manage_daemons.sh
 - `jq`（JSON 处理）
 - Obsidian + Advanced URI 插件
 
+## 测试状态
+
+**已验证可用：**
+- `monitor_task_json.sh`
+- `monitor_vault_md.sh`
+- `review_notification_daemon.sh`
+- `review_action_complete.sh`
+- `review_action_skip.sh`
+- `action_handler.py`
+- `scan_task_in_file.py`
+
+**未测试：**
+- `review_job_launch.py`
+- `ob_task_rearrange.py`
+- `monitor_task_abort_json.sh`
+- `polling_manage_longterm_task.sh`
+
 ## 目录结构
 
 ```
